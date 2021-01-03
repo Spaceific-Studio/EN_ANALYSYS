@@ -2773,7 +2773,7 @@
     {
       "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
       "NodeType": "StringInputNode",
-      "InputValue": "# -*- coding: utf-8 -*-\r\n# Copyright(c) 2020, Daniel Gercak\r\n#Classes for organizing elements in space and for space analases\r\n#e.g. kD_Trees...\r\n#resource_path: H:\\_WORK\\PYTHON\\REVIT_API\\LIB\\SpaceOrganize.py\r\nimport sys\r\nif \"IronPython\" in sys.prefix:\r\n\tpytPath = r'C:\\Program Files (x86)\\IronPython 2.7\\Lib'\r\nsys.path.append(pytPath)\r\nimport os\r\nimport platform\r\n\r\ntry:\r\n\tsys.modules['__main__']\r\n\thasMainAttr = True\t\r\nexcept:\r\n\thasMainAttr = False\r\n\r\nif hasMainAttr:\r\n\t#import clr\r\n\tif \"pydroid\" in sys.prefix:\r\n\t    pass\r\n\telif \"Python38\" in sys.prefix:\r\n\t    pass\r\n\telse:\r\n\t    from Autodesk.Revit.UI.Selection import *\r\n\t    import Autodesk.Revit.DB as DB\r\n\t    doc = __revit__.ActiveUIDocument.Document\r\n\t    #clr.AddReference(\"RevitServices\")\r\n\t    #import RevitServices\r\n\t    #from RevitServices.Transactions import TransactionManager\r\n\t    pass\r\n\r\nelse:\r\n\tif \"pydroid\" in sys.prefix:\r\n\t    pass\r\n\telif \"Python38\" in sys.prefix:\r\n\t    pass\r\n\telse:\r\n\t    import clr\r\n\t    clr.AddReference('ProtoGeometry')\r\n\t    from Autodesk.DesignScript.Geometry import *\r\n\t    clr.AddReference(\"RevitAPI\")\r\n\t    import Autodesk\r\n\t    import Autodesk.Revit.DB as DB\r\n\t    clr.AddReference(\"RevitServices\")\r\n\t    import RevitServices\r\n\t    from RevitServices.Persistence import DocumentManager\r\n\t    from RevitServices.Transactions import TransactionManager\r\n\t    doc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n# clr.AddReference(\"RevitAPI\")\r\n# import Autodesk\r\n# import Autodesk.Revit.DB as DB\r\n\r\ntry:\r\n\timport Autodesk\r\n\tsys.modules['Autodesk']\r\n\thasAutodesk = True\t\r\nexcept:\r\n\thasAutodesk = False\r\n\r\nprint(\"module : {0} ; hasMainAttr = {1}\".format(__file__, hasMainAttr))\r\nprint(\"module : {0} ; hasAutodesk = {1}\".format(__file__, hasAutodesk))\r\n\r\nif sys.platform.startswith('linux'):\r\n    libPath = r\"/storage/emulated/0/_WORK/REVIT_API/LIB\"\r\nelif sys.platform.startswith('win') or sys.platform.startswith('cli'):\r\n    libPath = r\"H:/_WORK/PYTHON/REVIT_API/LIB\"\r\n\r\nsys.path.append(libPath)\r\n\r\nfrom Errors import *\r\n\r\n\"\"\" Errors.catchVar(sys.platform, \"sys.platform\")\r\nErrors.catchVar(sys.prefix, \"sys.prefix\")\r\nErrors.catchVar(os.name, \"os.name\")\r\nErrors.catchVar(platform.sys, \"platform.sys\")\r\nErrors.catchVar(platform.os, \"platform.os\")\r\nErrors.catchVar(platform.platform(), \"platform.platform()\") \"\"\"\r\n\r\nimport SpaceOrganize\r\n\r\nstructuredElements = IN[0]\r\nbPoints = []\r\n#TransactionManager.Instance.EnsureInTransaction(doc)\r\n#t = DB.SubTransaction(doc)\r\n\r\n# Begin new transaction\r\n#t.Start()\r\nfor i, el in enumerate(list(structuredElements[1])):\r\n\t#raise TypeError(\"{0}\".format(type(DB.ElementId(el.Id))))\r\n\t#Errors.catchVar(el.Id, \"{1} el.Id - {0}\".format(el.Id, i))\r\n\tdocEl = doc.GetElement(DB.ElementId(el.Id))\r\n\t# Get the Bounding Box of the selected element.\r\n\tel_bb = docEl.get_BoundingBox(doc.ActiveView)\r\n\t#Errors.catchVar(el_bb, \"{1} dir(el.Geometry) - {0}\".format(dir(el.Geometry[options]), i))\r\n\t#Errors.catchVar(el_bb.Max.X, \"{1} el_bb.Max.X - {0}\".format(el_bb.Max.X, i))\r\n\tbPoint = ((el_bb.Max.X - el_bb.Min.X) / 2.0, (el_bb.Max.Y - el_bb.Min.Y) / 2.0, (el_bb.Max.Z - el_bb.Min.Z) / 2.0)\r\n\tbPoints.append(bPoint)\r\n\r\n# Close the transaction\r\n#t.Commit()\r\n#TransactionManager.Instance.TransactionTaskDone()\r\n\r\nif Errors.hasError():\r\n \tOUT = Errors.report\r\nelif Errors.hasContent():\r\n\tOUT = Errors.getConntainerContent()\r\nelse:\r\n\tOUT = (structuredElements[1], bPoints)\r\n\r\n\r\n\r\n\r\n",
+      "InputValue": "# -*- coding: utf-8 -*-\r\n# Copyright(c) 2020, Daniel Gercak\r\n#Classes for organizing elements in space and for space analases\r\n#e.g. kD_Trees...\r\n#resource_path: https://github.com/Spaceific-Arch/_WORK/REVIT_API/joinStructuredElements.py\r\nimport sys\r\nif \"IronPython\" in sys.prefix:\r\n\tpytPath = r'C:\\Program Files (x86)\\IronPython 2.7\\Lib'\r\nsys.path.append(pytPath)\r\nimport os\r\nimport platform\r\n\r\ntry:\r\n\tsys.modules['__main__']\r\n\thasMainAttr = True\t\r\nexcept:\r\n\thasMainAttr = False\r\n\r\nif hasMainAttr:\r\n\t#import clr\r\n\tif \"pydroid\" in sys.prefix:\r\n\t    pass\r\n\telif \"Python38\" in sys.prefix:\r\n\t    pass\r\n\telse:\r\n\t    from Autodesk.Revit.UI.Selection import *\r\n\t    import Autodesk.Revit.DB as DB\r\n\t    doc = __revit__.ActiveUIDocument.Document\r\n\t    #clr.AddReference(\"RevitServices\")\r\n\t    #import RevitServices\r\n\t    #from RevitServices.Transactions import TransactionManager\r\n\t    pass\r\n\r\nelse:\r\n\tif \"pydroid\" in sys.prefix:\r\n\t    pass\r\n\telif \"Python38\" in sys.prefix:\r\n\t    pass\r\n\telse:\r\n\t    import clr\r\n\t    clr.AddReference('ProtoGeometry')\r\n\t    from Autodesk.DesignScript.Geometry import *\r\n\t    clr.AddReference(\"RevitAPI\")\r\n\t    import Autodesk\r\n\t    import Autodesk.Revit.DB as DB\r\n\t    clr.AddReference(\"RevitServices\")\r\n\t    import RevitServices\r\n\t    from RevitServices.Persistence import DocumentManager\r\n\t    from RevitServices.Transactions import TransactionManager\r\n\t    doc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n# clr.AddReference(\"RevitAPI\")\r\n# import Autodesk\r\n# import Autodesk.Revit.DB as DB\r\n\r\ntry:\r\n\timport Autodesk\r\n\tsys.modules['Autodesk']\r\n\thasAutodesk = True\t\r\nexcept:\r\n\thasAutodesk = False\r\n\r\nprint(\"module : {0} ; hasMainAttr = {1}\".format(__file__, hasMainAttr))\r\nprint(\"module : {0} ; hasAutodesk = {1}\".format(__file__, hasAutodesk))\r\n\r\nif sys.platform.startswith('linux'):\r\n    libPath = r\"/storage/emulated/0/_WORK/REVIT_API/LIB\"\r\nelif sys.platform.startswith('win') or sys.platform.startswith('cli'):\r\n    libPath = r\"H:/_WORK/PYTHON/REVIT_API/LIB\"\r\n\r\nsys.path.append(libPath)\r\n\r\nfrom Errors import *\r\n\r\n\"\"\" Errors.catchVar(sys.platform, \"sys.platform\")\r\nErrors.catchVar(sys.prefix, \"sys.prefix\")\r\nErrors.catchVar(os.name, \"os.name\")\r\nErrors.catchVar(platform.sys, \"platform.sys\")\r\nErrors.catchVar(platform.os, \"platform.os\")\r\nErrors.catchVar(platform.platform(), \"platform.platform()\") \"\"\"\r\n\r\nimport SpaceOrganize\r\n\r\nstructuredElements = IN[0]\r\nbPoints = []\r\nbbs = []\r\nintersectedElements = []\r\n#TransactionManager.Instance.EnsureInTransaction(doc)\r\n#t = DB.SubTransaction(doc)\r\n\r\n# Begin new transaction\r\n#t.Start()\r\nfor i, el in enumerate(list(structuredElements[1])):\r\n\t\r\n\t#raise TypeError(\"{0}\".format(type(DB.ElementId(el.Id))))\r\n\t#Errors.catchVar(el.Id, \"{1} el.Id - {0}\".format(el.Id, i))\r\n\tdocEl = doc.GetElement(DB.ElementId(el.Id))\r\n\telIntFilter = \tDB.ElementIntersectsElementFilter(docEl)\r\n\t#reference = DB.Reference(docEl)\r\n\t#solid = docEl.GetGeometryObjectFromReference(reference)\r\n\t#solidIntFilter = DB.ElementIntersectsSolidFilter(solid)\r\n\tintElements = DB.FilteredElementCollector(doc).WherePasses(elIntFilter).WhereElementIsNotElementType().ToElements()\r\n\t#intSolids = DB.FilteredElementCollector(doc).WherePasses(elIntFilter).WhereElementIsNotElementType().ToElements()\r\n\tintersectedElements.append(intElements)\r\n\t# Get the Bounding Box of the selected element.\r\n\tel_bb = docEl.get_BoundingBox(doc.ActiveView)\r\n\tbbs.append(docEl)\r\n\t#Errors.catchVar(el_bb, \"{1} dir(el.Geometry) - {0}\".format(dir(el.Geometry[options]), i))\r\n\t#Errors.catchVar(el_bb.Max.X, \"{1} el_bb.Max.X - {0}\".format(el_bb.Max.X, i))\r\n\tbPoint = ( \\\r\n\t\t\t\tDB.UnitUtils.ConvertFromInternalUnits((el_bb.Max.X - el_bb.Min.X) / 2.0, DB.DisplayUnitType.DUT_MILLIMETERS), \\\r\n\t\t\t\tDB.UnitUtils.ConvertFromInternalUnits((el_bb.Max.Y - el_bb.Min.Y) / 2.0, DB.DisplayUnitType.DUT_MILLIMETERS), \\\r\n\t\t\t\tDB.UnitUtils.ConvertFromInternalUnits((el_bb.Max.Z - el_bb.Min.Z) / 2.0, DB.DisplayUnitType.DUT_MILLIMETERS) \\\r\n\t\t\t)\r\n\tbPoints.append(bPoint)\r\n\r\n# Close the transaction\r\n#t.Commit()\r\n#TransactionManager.Instance.TransactionTaskDone()\r\n\r\nif Errors.hasError():\r\n \tOUT = Errors.report\r\nelif Errors.hasContent():\r\n\tOUT = Errors.getConntainerContent()\r\nelse:\r\n\tOUT = (structuredElements[1], bPoints, bbs, intersectedElements)\r\n\r\n\r\n\r\n\r\n",
       "Id": "6a9ac1c776f84fa89d0f9f89776c5512",
       "Inputs": [],
       "Outputs": [
@@ -2789,6 +2789,417 @@
       ],
       "Replication": "Disabled",
       "Description": "Vytvoří řetězec."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "tList = List.Transpose(inList[1]);\ntList[0];\ntList[1];\ntList[2];",
+      "Id": "d1bf8da312fc481d91175641925aadcb",
+      "Inputs": [
+        {
+          "Id": "af56a1c3c787460db0d6aa62b9666d67",
+          "Name": "inList",
+          "Description": "inList",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "56c20fbd162f440690dc6a87702b25e0",
+          "Name": "",
+          "Description": "tList",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "0e79e38a1b1e49169ac82fa7ff1b0793",
+          "Name": "",
+          "Description": "Hodnota výrazu na řádku 2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "cb001e83cc674a6c95cf4cbf604cd4b6",
+          "Name": "",
+          "Description": "Hodnota výrazu na řádku 3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "de3f08c507374a0e85c20a1233f30f41",
+          "Name": "",
+          "Description": "Hodnota výrazu na řádku 4",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Umožňuje přímé vytváření kódu DesignScript."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Autodesk.DesignScript.Geometry.Point.ByCoordinates@double,double,double",
+      "Id": "8c44c1184f2b47fc8422cb02957a4c57",
+      "Inputs": [
+        {
+          "Id": "fcac170a96404302bccca75e1d1886b6",
+          "Name": "x",
+          "Description": "double\nVýchozí hodnota : 0",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f3db2e16146348d2a71afb059741d193",
+          "Name": "y",
+          "Description": "double\nVýchozí hodnota : 0",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e47de693cf904f7f94f4bb9e98b244f5",
+          "Name": "z",
+          "Description": "double\nVýchozí hodnota : 0",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "6b8e77b5acad4b11a893aecbf4666f32",
+          "Name": "Point",
+          "Description": "Point",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Vytvořit bod daný 3 kartézskými souřadnicemi\n\nPoint.ByCoordinates (x: double = 0, y: double = 0, z: double = 0): Point"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "tList = inList[2];",
+      "Id": "3648ba29f81149bba0be877ba01cbf6f",
+      "Inputs": [
+        {
+          "Id": "5c63c75233fd4e8fa7d11ded7a675ab0",
+          "Name": "inList",
+          "Description": "inList",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "f34cd7b13f974ed4b359a5cc13db0d24",
+          "Name": "",
+          "Description": "tList",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Umožňuje přímé vytváření kódu DesignScript."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Autodesk.DesignScript.Geometry.Arc.Radius",
+      "Id": "f7ad2eca45f94c79b3ae7e14e920ee47",
+      "Inputs": [
+        {
+          "Id": "2046f7c060cd4bf68fdef1569a6cf1b7",
+          "Name": "arc",
+          "Description": "Autodesk.DesignScript.Geometry.Arc",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "c7ca0d395cac43ddb2fac863dcdb4953",
+          "Name": "double",
+          "Description": "double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Poloměr oblouku\n\nArc.Radius: double"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Autodesk.DesignScript.Geometry.Geometry.DistanceTo@Autodesk.DesignScript.Geometry.Geometry",
+      "Id": "31511543b7fd4aeeb6c9d186cec88ace",
+      "Inputs": [
+        {
+          "Id": "ab3906ec4ae34613a3e52aa91ba2206f",
+          "Name": "geometry",
+          "Description": "Autodesk.DesignScript.Geometry.Geometry",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "86b6788f2ac5445bbcf23eafe6ac5726",
+          "Name": "other",
+          "Description": "Jiná geometrie\n\nGeometry",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "3a45343e52574f4b8686302421664160",
+          "Name": "double",
+          "Description": "Vzdálenost",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "CrossProduct",
+      "Description": "Získat vzdálenost z této geometrie do jiné\n\nGeometry.DistanceTo (other: Geometry): double"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.Element.Geometry",
+      "Id": "f07049fcb1754787975a0fc80597d248",
+      "Inputs": [
+        {
+          "Id": "664f304247494a8f8c559dc453f3221b",
+          "Name": "element",
+          "Description": "Revit.Elements.Element",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "2aebbe0930db4f6f9294f5274fca1776",
+          "Name": "var[]",
+          "Description": "var[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Získejte všechny geometrie přiřazené k tomuto objektu.\n\nElement.Geometry ( ): var[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.Flatten@var[]..[],int",
+      "Id": "212450a6929140b2ac661f608e5051f2",
+      "Inputs": [
+        {
+          "Id": "cc6a5a94d8cf483c9542e5405c97548a",
+          "Name": "list",
+          "Description": "Seznam k vyrovnání\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "35c291dfb7104223a72c3ad9398c1c9c",
+          "Name": "amt",
+          "Description": "Hladiny vnoření, které chcete odstranit\n\nint\nVýchozí hodnota : -1",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b8a62b6b7fb342f7bacc0c42fdb3165a",
+          "Name": "var[]..[]",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Vyrovná vnořený seznam seznamů o určitou hodnotu.\n\nList.Flatten (list: var[]..[], amt: int = -1): var[]..[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Autodesk.DesignScript.Geometry.Geometry.IntersectAll@Autodesk.DesignScript.Geometry.Geometry[]",
+      "Id": "723d01782f784109b648c0265eb968eb",
+      "Inputs": [
+        {
+          "Id": "523bac0368d54e08bf1bce16f345f0cd",
+          "Name": "geometry",
+          "Description": "Autodesk.DesignScript.Geometry.Geometry",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "56169b6644464a74beef13e0bb63ae3f",
+          "Name": "others",
+          "Description": "Geometry[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "a725ecea7b4e434bb97e3399c48e1e84",
+          "Name": "Geometry[]",
+          "Description": "Geometry[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Získejte průsečík geometrie pro tento objekt a kolekci dalších geometrií. Najde společné geometrie všech účastníků.\n\nGeometry.IntersectAll (others: Geometry[]): Geometry[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Autodesk.DesignScript.Geometry.Geometry.DoesIntersect@Autodesk.DesignScript.Geometry.Geometry",
+      "Id": "3e10df90722f45928fee9a8cff9df9bf",
+      "Inputs": [
+        {
+          "Id": "5ec748895bee47ceaa0c7355c3c9d7ee",
+          "Name": "geometry",
+          "Description": "Autodesk.DesignScript.Geometry.Geometry",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2b088091b62e40758ca35c52bb00e883",
+          "Name": "other",
+          "Description": "Geometry",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "d7500aeaf55e453abc831d0e5c76d36a",
+          "Name": "bool",
+          "Description": "bool",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "CrossProduct",
+      "Description": "Určit, zda se jiný objekt geometrie protíná s tímto\n\nGeometry.DoesIntersect (other: Geometry): bool"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "tList = inList[3];",
+      "Id": "069238072a24456ba99fae85cbfbd811",
+      "Inputs": [
+        {
+          "Id": "eb82895ff4624fe6a76564202de704bc",
+          "Name": "inList",
+          "Description": "inList",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "9c0368f0f1a74127a228e69477a5195d",
+          "Name": "",
+          "Description": "tList",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Umožňuje přímé vytváření kódu DesignScript."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.Element.Geometry",
+      "Id": "1aa48405fea24516b3f393308ed5b738",
+      "Inputs": [
+        {
+          "Id": "baa4071cb74d4fe8810022828d4ef0b0",
+          "Name": "element",
+          "Description": "Revit.Elements.Element",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "13131962c7ef48a7bfb89d69ade8c440",
+          "Name": "var[]",
+          "Description": "var[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Získejte všechny geometrie přiřazené k tomuto objektu.\n\nElement.Geometry ( ): var[]"
     }
   ],
   "Connectors": [
@@ -3248,9 +3659,74 @@
       "Id": "784e1e58fe4a4bbfbe715b2fcdfaa828"
     },
     {
+      "Start": "0d7326b48e0b4fb49363f504651d5e18",
+      "End": "af56a1c3c787460db0d6aa62b9666d67",
+      "Id": "b5ecdfef05f2477e89347eb160c7c7da"
+    },
+    {
+      "Start": "0d7326b48e0b4fb49363f504651d5e18",
+      "End": "5c63c75233fd4e8fa7d11ded7a675ab0",
+      "Id": "9539770a87b64409ad42c7593eef62b7"
+    },
+    {
+      "Start": "0d7326b48e0b4fb49363f504651d5e18",
+      "End": "eb82895ff4624fe6a76564202de704bc",
+      "Id": "e358765becf743249e39bbacb8de9a29"
+    },
+    {
       "Start": "0cd5adac3eb94172b3451b3e1981d644",
       "End": "727393c8f7124e368a8203751b389125",
       "Id": "cbfe1cb71b384309880d6b16113911be"
+    },
+    {
+      "Start": "0e79e38a1b1e49169ac82fa7ff1b0793",
+      "End": "fcac170a96404302bccca75e1d1886b6",
+      "Id": "106d23ff41d24b37861863e23c6d9d3f"
+    },
+    {
+      "Start": "cb001e83cc674a6c95cf4cbf604cd4b6",
+      "End": "f3db2e16146348d2a71afb059741d193",
+      "Id": "248f7efff0be4f7fb600113e888ce4c8"
+    },
+    {
+      "Start": "de3f08c507374a0e85c20a1233f30f41",
+      "End": "e47de693cf904f7f94f4bb9e98b244f5",
+      "Id": "afd9a10c00a3458194986b1e10e5a464"
+    },
+    {
+      "Start": "f34cd7b13f974ed4b359a5cc13db0d24",
+      "End": "664f304247494a8f8c559dc453f3221b",
+      "Id": "a2dc97e0c251472ca873cba7cbf33b67"
+    },
+    {
+      "Start": "2aebbe0930db4f6f9294f5274fca1776",
+      "End": "cc6a5a94d8cf483c9542e5405c97548a",
+      "Id": "71a48e0016414851bc53b9394f60dc55"
+    },
+    {
+      "Start": "b8a62b6b7fb342f7bacc0c42fdb3165a",
+      "End": "ab3906ec4ae34613a3e52aa91ba2206f",
+      "Id": "e8cf384814b54db49ce07f0b03dc1ee0"
+    },
+    {
+      "Start": "b8a62b6b7fb342f7bacc0c42fdb3165a",
+      "End": "86b6788f2ac5445bbcf23eafe6ac5726",
+      "Id": "7dc3697e36724eb4b4f1ded83a0b508c"
+    },
+    {
+      "Start": "b8a62b6b7fb342f7bacc0c42fdb3165a",
+      "End": "5ec748895bee47ceaa0c7355c3c9d7ee",
+      "Id": "77970c4c32334e5b96f7b129d9302148"
+    },
+    {
+      "Start": "b8a62b6b7fb342f7bacc0c42fdb3165a",
+      "End": "2b088091b62e40758ca35c52bb00e883",
+      "Id": "42f024582fbe4c888de431cd0b8e9886"
+    },
+    {
+      "Start": "9c0368f0f1a74127a228e69477a5195d",
+      "End": "baa4071cb74d4fe8810022828d4ef0b0",
+      "Id": "1105a63df7ee4708be4e5cd8ce15e38a"
     }
   ],
   "Dependencies": [],
@@ -3266,15 +3742,15 @@
     },
     "Camera": {
       "Name": "Náhled pozadí",
-      "EyeX": 17763.79565543872,
-      "EyeY": 8961.1142504246382,
-      "EyeZ": 11495.829911000008,
-      "LookX": -12884.503049505955,
-      "LookY": -8835.3776664862053,
-      "LookZ": -15241.013452138497,
-      "UpX": -0.12871181755048841,
-      "UpY": 0.97992470462188264,
-      "UpZ": -0.15225255760336437
+      "EyeX": 21192.617070708737,
+      "EyeY": -175.89337307004871,
+      "EyeZ": 37.195956144947559,
+      "LookX": -15075.875229289893,
+      "LookY": -561.29601001176115,
+      "LookZ": -8080.01229335889,
+      "UpX": 0.16062077306622219,
+      "UpY": 0.983254907564951,
+      "UpZ": 0.086085736397103985
     },
     "NodeViews": [
       {
@@ -3304,8 +3780,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 3979.7459473041354,
-        "Y": -313.944214002301
+        "X": 4689.7723990135619,
+        "Y": -408.48467278731971
       },
       {
         "ShowGeometry": true,
@@ -3314,8 +3790,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 3850.6206450881082,
-        "Y": -366.93958203935972
+        "X": 4560.6470967975347,
+        "Y": -461.48004082437842
       },
       {
         "ShowGeometry": true,
@@ -3324,8 +3800,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 4188.1283768492767,
-        "Y": -510.45395483867583
+        "X": 4898.1548285587032,
+        "Y": -604.99441362369453
       },
       {
         "ShowGeometry": false,
@@ -3334,8 +3810,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1633.1381311155576,
-        "Y": -705.10815259265337
+        "X": 2343.1645828249839,
+        "Y": -799.64861137767207
       },
       {
         "ShowGeometry": true,
@@ -3344,8 +3820,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1971.9062955438051,
-        "Y": -773.81412926903022
+        "X": 2681.9327472532314,
+        "Y": -868.35458805404892
       },
       {
         "ShowGeometry": true,
@@ -3354,8 +3830,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1971.906295543806,
-        "Y": -682.66609753589228
+        "X": 2681.9327472532323,
+        "Y": -777.206556320911
       },
       {
         "ShowGeometry": true,
@@ -3364,8 +3840,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 3511.3396946078019,
-        "Y": -646.4618137428165
+        "X": 4221.3661463172284,
+        "Y": -741.0022725278352
       },
       {
         "ShowGeometry": true,
@@ -3374,8 +3850,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 2762.6637477874683,
-        "Y": -965.556653611829
+        "X": 3472.6901994968948,
+        "Y": -1060.0971123968477
       },
       {
         "ShowGeometry": true,
@@ -3384,8 +3860,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 3216.4122512825115,
-        "Y": -796.934228320504
+        "X": 3926.438702991938,
+        "Y": -891.47468710552266
       },
       {
         "ShowGeometry": true,
@@ -3394,8 +3870,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1939.8462168912895,
-        "Y": -564.04380652158466
+        "X": 2649.8726686007158,
+        "Y": -658.58426530660336
       },
       {
         "ShowGeometry": false,
@@ -3404,8 +3880,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 3780.1817728435553,
-        "Y": -642.88458849761855
+        "X": 4490.2082245529818,
+        "Y": -737.42504728263725
       },
       {
         "ShowGeometry": false,
@@ -3414,8 +3890,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 3889.2023173666503,
-        "Y": -514.18746992027388
+        "X": 4599.2287690760768,
+        "Y": -608.72792870529258
       },
       {
         "ShowGeometry": true,
@@ -3424,8 +3900,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1944.6056278758681,
-        "Y": -489.0921499767046
+        "X": 2654.6320795852944,
+        "Y": -583.6326087617233
       },
       {
         "ShowGeometry": true,
@@ -3434,8 +3910,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1943.4303600301002,
-        "Y": -408.95010707731149
+        "X": 2653.4568117395265,
+        "Y": -503.49056586233019
       },
       {
         "ShowGeometry": true,
@@ -3444,8 +3920,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 2322.1474918993135,
-        "Y": -343.52015915222148
+        "X": 3032.17394360874,
+        "Y": -438.06061793724018
       },
       {
         "ShowGeometry": true,
@@ -3454,8 +3930,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 2323.3227597450832,
-        "Y": -423.66220205161449
+        "X": 3033.3492114545097,
+        "Y": -518.20266083663319
       },
       {
         "ShowGeometry": true,
@@ -3464,8 +3940,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 2318.5633487605037,
-        "Y": -498.61385859649454
+        "X": 3028.58980046993,
+        "Y": -593.15431738151324
       },
       {
         "ShowGeometry": true,
@@ -3474,8 +3950,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 3846.5526391760422,
-        "Y": -276.46198593269571
+        "X": 4556.5790908854688,
+        "Y": -371.00244471771441
       },
       {
         "ShowGeometry": true,
@@ -3533,7 +4009,7 @@
         "Id": "8c0aec2747ab4b5597eac43163a6dd2e",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
-        "Excluded": false,
+        "Excluded": true,
         "X": 2485.5782723343259,
         "Y": -2031.6403118828334
       },
@@ -3854,8 +4330,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 649.64757474806356,
-        "Y": -76.379455879901343
+        "X": -300.89560538080741,
+        "Y": 253.74931326665273
       },
       {
         "ShowGeometry": false,
@@ -3864,8 +4340,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 889.57526216468034,
-        "Y": -77.365458466296332
+        "X": -60.967917964190633,
+        "Y": 252.76331068025775
       },
       {
         "ShowGeometry": true,
@@ -3874,8 +4350,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 927.21160349928277,
-        "Y": 97.776490319195091
+        "X": -23.3315766295882,
+        "Y": 427.90525946574917
       },
       {
         "ShowGeometry": true,
@@ -3884,8 +4360,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 920.42721700387347,
-        "Y": 200.02506895370516
+        "X": -30.115963124997506,
+        "Y": 530.15383810025924
       },
       {
         "ShowGeometry": true,
@@ -3894,8 +4370,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1066.2744345513033,
-        "Y": 143.78013255378528
+        "X": 115.73125442243236,
+        "Y": 473.90890170033936
       },
       {
         "ShowGeometry": true,
@@ -3904,8 +4380,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1319.2562282818747,
-        "Y": -119.55549685769506
+        "X": 368.71304815300368,
+        "Y": 210.57327228885902
       },
       {
         "ShowGeometry": true,
@@ -3994,7 +4470,7 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 5338.3598384001125,
+        "X": 5341.7483736536369,
         "Y": -1156.3910713805283
       },
       {
@@ -4004,8 +4480,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 5589.2132707171422,
-        "Y": -1156.6925580667382
+        "X": 5592.6018059706666,
+        "Y": -1158.3868256935002
       },
       {
         "ShowGeometry": true,
@@ -4014,8 +4490,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 5842.9618506213028,
-        "Y": -1154.2209809897483
+        "X": 5846.3503858748272,
+        "Y": -1155.9152486165103
       },
       {
         "ShowGeometry": true,
@@ -4024,8 +4500,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 6050.8146781392825,
-        "Y": -1155.9783706378782
+        "X": 6054.2032133928069,
+        "Y": -1157.6726382646402
       },
       {
         "ShowGeometry": false,
@@ -4034,8 +4510,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 5051.5829382537631,
-        "Y": -1166.8956820983037
+        "X": 5054.9714735072876,
+        "Y": -1168.5899497250657
       },
       {
         "ShowGeometry": true,
@@ -4044,8 +4520,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 731.87677112303118,
-        "Y": -932.23860427077523
+        "X": 692.39772959754441,
+        "Y": -964.84026709937416
       },
       {
         "ShowGeometry": false,
@@ -4054,8 +4530,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 963.46931536823956,
-        "Y": -926.23557703435279
+        "X": 910.72500342551973,
+        "Y": -963.51910001021042
       },
       {
         "ShowGeometry": false,
@@ -4064,8 +4540,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1420.7343540862753,
-        "Y": -812.38937151801883
+        "X": 1159.998197512642,
+        "Y": -961.71372883032086
       },
       {
         "ShowGeometry": true,
@@ -4074,8 +4550,118 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1040.64831465527,
-        "Y": -763.27695238920148
+        "X": 842.15746939282337,
+        "Y": -732.07522738412058
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "d1bf8da312fc481d91175641925aadcb",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1381.3916081632315,
+        "Y": -960.84568666264977
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Point.ByCoordinates",
+        "Id": "8c44c1184f2b47fc8422cb02957a4c57",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1827.2272043230546,
+        "Y": -967.25545460723947
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "3648ba29f81149bba0be877ba01cbf6f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1379.2341243206952,
+        "Y": -512.74865034991637
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Arc.Radius",
+        "Id": "f7ad2eca45f94c79b3ae7e14e920ee47",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1890.8669481999673,
+        "Y": -446.580323799479
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Geometry.DistanceTo",
+        "Id": "31511543b7fd4aeeb6c9d186cec88ace",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2621.50465577845,
+        "Y": 17.599847952103715
+      },
+      {
+        "ShowGeometry": false,
+        "Name": "Element.Geometry",
+        "Id": "f07049fcb1754787975a0fc80597d248",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1992.0219727306335,
+        "Y": -85.001834634609622
+      },
+      {
+        "ShowGeometry": false,
+        "Name": "List.Flatten",
+        "Id": "212450a6929140b2ac661f608e5051f2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2260.2597755334696,
+        "Y": -85.072422191656983
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Geometry.IntersectAll",
+        "Id": "723d01782f784109b648c0265eb968eb",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3125.9046064198765,
+        "Y": -107.84974492980825
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Geometry.DoesIntersect",
+        "Id": "3e10df90722f45928fee9a8cff9df9bf",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2879.6940774646755,
+        "Y": -206.369537272
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "069238072a24456ba99fae85cbfbd811",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1393.4722911856165,
+        "Y": -86.782968171542052
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Element.Geometry",
+        "Id": "1aa48405fea24516b3f393308ed5b738",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1772.2516446870422,
+        "Y": 21.445174176673731
       }
     ],
     "Annotations": [
@@ -4102,12 +4688,12 @@
           "2dfea61705ff444386b57f7677b3b5cc",
           "b33109fb23594e87bfbb19bc3e1bf9bd"
         ],
-        "Left": 1623.1381311155576,
-        "Top": -1018.7566536118291,
+        "Left": 2333.1645828249839,
+        "Top": -1113.2971123968478,
         "Width": 2844.5902457337193,
         "Height": 862.09466767913329,
         "FontSize": 36.0,
-        "InitialTop": -965.556653611829,
+        "InitialTop": -1060.0971123968477,
         "InitialHeight": 834.09466767913329,
         "TextblockHeight": 43.2,
         "Background": "#FFC1D676"
@@ -4216,12 +4802,12 @@
           "e00eab2d5e10450296e38d52e2d72462",
           "2f2661404a4f4b0b8e1bd525b01e1e60"
         ],
-        "Left": 639.64757474806356,
-        "Top": -172.75549685769505,
+        "Left": -310.89560538080741,
+        "Top": 157.37327228885903,
         "Width": 959.20865353381112,
         "Height": 492.58056581140022,
         "FontSize": 36.0,
-        "InitialTop": -119.55549685769506,
+        "InitialTop": 210.57327228885902,
         "InitialHeight": 464.58056581140022,
         "TextblockHeight": 43.2,
         "Background": "#FFC1D676"
@@ -4274,12 +4860,12 @@
           "fec8b80e5a8e40bbb3682f6caa682c1b",
           "e58b9bbb73794919a7c8e121110e8c71"
         ],
-        "Left": 5041.5829382537631,
-        "Top": -1220.0956820983038,
+        "Left": 5044.9714735072876,
+        "Top": -1221.7899497250658,
         "Width": 1457.6317398855194,
         "Height": 181.60312403156567,
         "FontSize": 36.0,
-        "InitialTop": -1166.8956820983037,
+        "InitialTop": -1168.5899497250657,
         "InitialHeight": 157.67470110855538,
         "TextblockHeight": 43.2,
         "Background": "#FFC1D676"
@@ -4289,21 +4875,25 @@
         "Title": "structuredElements",
         "Nodes": [
           "43e207ef679b473e91aebb8ac98b0400",
-          "b9a7d404e4ea4f2a81d6678686130957"
+          "b9a7d404e4ea4f2a81d6678686130957",
+          "31b2de10ec524f41b2f1906481febad2",
+          "d1bf8da312fc481d91175641925aadcb",
+          "8c44c1184f2b47fc8422cb02957a4c57",
+          "6a9ac1c776f84fa89d0f9f89776c5512"
         ],
-        "Left": 721.87677112303118,
-        "Top": -985.43860427077527,
-        "Width": 385.99254424520836,
-        "Height": 177.40302723642247,
+        "Left": 682.39772959754441,
+        "Top": -1020.4554546072395,
+        "Width": 1311.6294747255101,
+        "Height": 4016.9802272231191,
         "FontSize": 36.0,
-        "InitialTop": -932.23860427077523,
+        "InitialTop": -967.25545460723947,
         "InitialHeight": 151.00302723642244,
         "TextblockHeight": 43.2,
         "Background": "#FFC1D676"
       }
     ],
-    "X": -450.64710557660237,
-    "Y": 782.67229067509925,
-    "Zoom": 0.67455706590377273
+    "X": -1167.5402200329963,
+    "Y": 210.16302521988837,
+    "Zoom": 1.1345516794829482
   }
 }
