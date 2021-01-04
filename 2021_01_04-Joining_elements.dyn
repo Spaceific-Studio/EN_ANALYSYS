@@ -2,7 +2,7 @@
   "Uuid": "6191735e-b989-43b9-a7b3-b5af4e671ee9",
   "IsCustomNode": false,
   "Description": null,
-  "Name": "2020_08_19-Exterierova_obalka",
+  "Name": "2021_01_04-Joining_elements",
   "ElementResolver": {
     "ResolutionMap": {
       "List.[0..inList]": {
@@ -2771,26 +2771,6 @@
       "Description": "Spustí skript IronPython z řetězce."
     },
     {
-      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
-      "NodeType": "StringInputNode",
-      "InputValue": "# -*- coding: utf-8 -*-\r\n# Copyright(c) 2020, Daniel Gercak\r\n#Classes for organizing elements in space and for space analases\r\n#e.g. kD_Trees...\r\n#resource_path: https://github.com/Spaceific-Arch/_WORK/REVIT_API/joinStructuredElements.py\r\nimport sys\r\nif \"IronPython\" in sys.prefix:\r\n\tpytPath = r'C:\\Program Files (x86)\\IronPython 2.7\\Lib'\r\n\tsys.path.append(pytPath)\r\nimport os\r\nimport platform\r\n\r\ntry:\r\n\tsys.modules['__main__']\r\n\thasMainAttr = True\t\r\nexcept:\r\n\thasMainAttr = False\r\n\r\nif hasMainAttr:\r\n\t#import clr\r\n\tif \"pydroid\" in sys.prefix:\r\n\t    pass\r\n\telif \"Python38\" in sys.prefix:\r\n\t    pass\r\n\telse:\r\n\t    from Autodesk.Revit.UI.Selection import *\r\n\t    import Autodesk.Revit.DB as DB\r\n\t    doc = __revit__.ActiveUIDocument.Document\r\n\t    #clr.AddReference(\"RevitServices\")\r\n\t    #import RevitServices\r\n\t    #from RevitServices.Transactions import TransactionManager\r\n\t    pass\r\n\r\nelse:\r\n\tif \"pydroid\" in sys.prefix:\r\n\t    pass\r\n\telif \"Python38\" in sys.prefix:\r\n\t    pass\r\n\telse:\r\n\t    import clr\r\n\t    clr.AddReference('ProtoGeometry')\r\n\t    from Autodesk.DesignScript.Geometry import *\r\n\t    clr.AddReference(\"RevitAPI\")\r\n\t    import Autodesk\r\n\t    import Autodesk.Revit.DB as DB\r\n\t    clr.AddReference(\"RevitServices\")\r\n\t    import RevitServices\r\n\t    from RevitServices.Persistence import DocumentManager\r\n\t    from RevitServices.Transactions import TransactionManager\r\n\t    doc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n# clr.AddReference(\"RevitAPI\")\r\n# import Autodesk\r\n# import Autodesk.Revit.DB as DB\r\n\r\ntry:\r\n\timport Autodesk\r\n\tsys.modules['Autodesk']\r\n\thasAutodesk = True\t\r\nexcept:\r\n\thasAutodesk = False\r\n\r\nprint(\"module : {0} ; hasMainAttr = {1}\".format(__file__, hasMainAttr))\r\nprint(\"module : {0} ; hasAutodesk = {1}\".format(__file__, hasAutodesk))\r\n\r\nif sys.platform.startswith('linux'):\r\n    libPath = r\"/storage/emulated/0/_WORK/REVIT_API/LIB\"\r\nelif sys.platform.startswith('win') or sys.platform.startswith('cli'):\r\n    libPath = r\"H:/_WORK/PYTHON/REVIT_API/LIB\"\r\n\r\nif sys.platform.startswith('linux'):\r\n    pythLibPath = r\"/storage/emulated/0/_WORK/LIB\"\r\nelif sys.platform.startswith('win') or sys.platform.startswith('cli'):\r\n    pythLibPath = r\"H:/_WORK/PYTHON/LIB\"\r\n\r\nsys.path.append(libPath)\r\nsys.path.append(pythLibPath)\r\n\r\nfrom Errors import *\r\n\r\n\"\"\" Errors.catchVar(sys.platform, \"sys.platform\")\r\nErrors.catchVar(sys.prefix, \"sys.prefix\")\r\nErrors.catchVar(os.name, \"os.name\")\r\nErrors.catchVar(platform.sys, \"platform.sys\")\r\nErrors.catchVar(platform.os, \"platform.os\")\r\nErrors.catchVar(platform.platform(), \"platform.platform()\") \"\"\"\r\n\r\nimport SpaceOrganize\r\nimport RevitSelection as RS\r\nimport ListUtils\r\n\r\nstructuredElements = IN[0]\r\nbPoints = []\r\nbbs = []\r\nintersectedElements = []\r\nintersectedSolids = []\r\nrevitGeos = []\r\n#TransactionManager.Instance.EnsureInTransaction(doc)\r\n#t = DB.SubTransaction(doc)\r\n\r\n# Begin new transaction\r\n#t.Start()\r\nfor i, el in enumerate(list(structuredElements[1])):\r\n\t\r\n\t#raise TypeError(\"{0}\".format(type(DB.ElementId(el.Id))))\r\n\t#Errors.catchVar(el.Id, \"{1} el.Id - {0}\".format(el.Id, i))\r\n\tdocEl = doc.GetElement(DB.ElementId(el.Id))\r\n\ttry:\r\n\t\trevitGeo = RS.getRevitGeometry(el)\r\n\texcept Exception as ex:\r\n\t\tErrors.catch(ex, \"Error in getRevitGeo(docEl) dir(el){0}\\ndir(docEl){1}\".format(dir(el), dir(docEl)))\r\n\t\trevitGeo = None\r\n\trevitGeos.append(revitGeo)\r\n\telIntFilter = \tDB.ElementIntersectsElementFilter(docEl)\r\n\t#reference = DB.Reference(docEl)\r\n\t#solid = docEl.GetGeometryObjectFromReference(reference)\r\n\tsolidIntFilter = DB.ElementIntersectsSolidFilter(revitGeo)\r\n\tintElements = DB.FilteredElementCollector(doc).WherePasses(elIntFilter).WhereElementIsNotElementType().ToElements()\r\n\tintSolids = DB.FilteredElementCollector(doc).WherePasses(solidIntFilter).WhereElementIsNotElementType().ToElements()\r\n\tintersectedElements.append(intElements)\r\n\tintersectedSolids.append(intSolids)\r\n\t# Get the Bounding Box of the selected element.\r\n\tel_bb = docEl.get_BoundingBox(doc.ActiveView)\r\n\tbbs.append(docEl)\r\n\t#Errors.catchVar(el_bb, \"{1} dir(el.Geometry) - {0}\".format(dir(el.Geometry[options]), i))\r\n\t#Errors.catchVar(el_bb.Max.X, \"{1} el_bb.Max.X - {0}\".format(el_bb.Max.X, i))\r\n\tbPoint = ( \\\r\n\t\t\t\tDB.UnitUtils.ConvertFromInternalUnits((el_bb.Max.X - el_bb.Min.X) / 2.0, DB.DisplayUnitType.DUT_MILLIMETERS), \\\r\n\t\t\t\tDB.UnitUtils.ConvertFromInternalUnits((el_bb.Max.Y - el_bb.Min.Y) / 2.0, DB.DisplayUnitType.DUT_MILLIMETERS), \\\r\n\t\t\t\tDB.UnitUtils.ConvertFromInternalUnits((el_bb.Max.Z - el_bb.Min.Z) / 2.0, DB.DisplayUnitType.DUT_MILLIMETERS) \\\r\n\t\t\t)\r\n\tbPoints.append(bPoint)\r\n\r\n# Close the transaction\r\n#t.Commit()\r\n#TransactionManager.Instance.TransactionTaskDone()\r\n\r\nif Errors.hasError():\r\n \tOUT = Errors.report\r\nelif Errors.hasContent():\r\n\tOUT = Errors.getConntainerContent()\r\nelse:\r\n\tOUT = (structuredElements[1], bPoints, bbs, intersectedElements, intersectedSolids, revitGeos)\r\n\r\n\r\n\r\n\r\n",
-      "Id": "6a9ac1c776f84fa89d0f9f89776c5512",
-      "Inputs": [],
-      "Outputs": [
-        {
-          "Id": "0cd5adac3eb94172b3451b3e1981d644",
-          "Name": "",
-          "Description": "String",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Vytvoří řetězec."
-    },
-    {
       "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
       "NodeType": "CodeBlockNode",
       "Code": "tList = List.Transpose(inList[1]);\ntList[0];\ntList[1];\ntList[2];",
@@ -3200,6 +3180,26 @@
       ],
       "Replication": "Auto",
       "Description": "Získejte všechny geometrie přiřazené k tomuto objektu.\n\nElement.Geometry ( ): var[]"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "# -*- coding: utf-8 -*-\r\n# Copyright(c) 2020, Daniel Gercak\r\n#Classes for organizing elements in space and for space analases\r\n#e.g. kD_Trees...\r\n#resource_path: https://github.com/Spaceific-Arch/_WORK/REVIT_API/joinStructuredElements.py\r\nimport sys\r\nif \"IronPython\" in sys.prefix:\r\n\tpytPath = r'C:\\Program Files (x86)\\IronPython 2.7\\Lib'\r\n\tsys.path.append(pytPath)\r\nimport os\r\nimport platform\r\n\r\ntry:\r\n\tsys.modules['__main__']\r\n\thasMainAttr = True\t\r\nexcept:\r\n\thasMainAttr = False\r\n\r\nif hasMainAttr:\r\n\t#import clr\r\n\tif \"pydroid\" in sys.prefix:\r\n\t    pass\r\n\telif \"Python38\" in sys.prefix:\r\n\t    pass\r\n\telse:\r\n\t    from Autodesk.Revit.UI.Selection import *\r\n\t    import Autodesk.Revit.DB as DB\r\n\t    doc = __revit__.ActiveUIDocument.Document\r\n\t    #clr.AddReference(\"RevitServices\")\r\n\t    #import RevitServices\r\n\t    #from RevitServices.Transactions import TransactionManager\r\n\t    pass\r\n\r\nelse:\r\n\tif \"pydroid\" in sys.prefix:\r\n\t    pass\r\n\telif \"Python38\" in sys.prefix:\r\n\t    pass\r\n\telse:\r\n\t    import clr\r\n\t    clr.AddReference('ProtoGeometry')\r\n\t    from Autodesk.DesignScript.Geometry import *\r\n\t    clr.AddReference(\"RevitAPI\")\r\n\t    import Autodesk\r\n\t    import Autodesk.Revit.DB as DB\r\n\t    clr.AddReference(\"RevitServices\")\r\n\t    import RevitServices\r\n\t    from RevitServices.Persistence import DocumentManager\r\n\t    from RevitServices.Transactions import TransactionManager\r\n\t    doc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n# clr.AddReference(\"RevitAPI\")\r\n# import Autodesk\r\n# import Autodesk.Revit.DB as DB\r\n\r\ntry:\r\n\timport Autodesk\r\n\tsys.modules['Autodesk']\r\n\thasAutodesk = True\t\r\nexcept:\r\n\thasAutodesk = False\r\n\r\nprint(\"module : {0} ; hasMainAttr = {1}\".format(__file__, hasMainAttr))\r\nprint(\"module : {0} ; hasAutodesk = {1}\".format(__file__, hasAutodesk))\r\n\r\nif sys.platform.startswith('linux'):\r\n    libPath = r\"/storage/emulated/0/_WORK/REVIT_API/LIB\"\r\nelif sys.platform.startswith('win') or sys.platform.startswith('cli'):\r\n    libPath = r\"H:/_WORK/PYTHON/REVIT_API/LIB\"\r\n\r\nif sys.platform.startswith('linux'):\r\n    pythLibPath = r\"/storage/emulated/0/_WORK/LIB\"\r\nelif sys.platform.startswith('win') or sys.platform.startswith('cli'):\r\n    pythLibPath = r\"H:/_WORK/PYTHON/LIB\"\r\n\r\nsys.path.append(libPath)\r\nsys.path.append(pythLibPath)\r\n\r\nfrom Errors import *\r\n\r\n\"\"\" Errors.catchVar(sys.platform, \"sys.platform\")\r\nErrors.catchVar(sys.prefix, \"sys.prefix\")\r\nErrors.catchVar(os.name, \"os.name\")\r\nErrors.catchVar(platform.sys, \"platform.sys\")\r\nErrors.catchVar(platform.os, \"platform.os\")\r\nErrors.catchVar(platform.platform(), \"platform.platform()\") \"\"\"\r\n\r\nimport SpaceOrganize\r\nimport RevitSelection as RS\r\nimport ListUtils\r\nimport heapq\r\n\r\ndef groupByDistance(inRevitElements):\r\n\tbaseElement = inRevitElements[0]\r\n\tbaseSolid = RS.getRevitGeometry(baseElement, asDynamoGeo = True)\r\n\trestElements = inRevitElements[1:]\r\n\tdistanceOrdered = []\r\n\tfor restElement in restElements:\r\n\t\trestSolid = RS.getRevitGeometry(restElement, asDynamoGeo = True)\r\n\t\tdist = baseSolid.DistanceTo(restSolid)\r\n\t\theappush(distanceOrdered, (dist, (restSolid, restElement)))\r\n\t\t\r\n\treturn distanceOrdered\r\n\r\nstructuredElements = IN[0]\r\nbPoints = []\r\nbbs = []\r\nintersectedElements = []\r\nintersectedSolids = []\r\nrevitGeos = []\r\n#TransactionManager.Instance.EnsureInTransaction(doc)\r\n#t = DB.SubTransaction(doc)\r\n\r\n# Begin new transaction\r\n#t.Start()\r\nfor i, el in enumerate(list(structuredElements[1])):\r\n\t\r\n\t#raise TypeError(\"{0}\".format(type(DB.ElementId(el.Id))))\r\n\t#Errors.catchVar(el.Id, \"{1} el.Id - {0}\".format(el.Id, i))\r\n\tdocEl = doc.GetElement(DB.ElementId(el.Id))\r\n\ttry:\r\n\t\trevitGeo = RS.getRevitGeometry(el)\r\n\texcept Exception as ex:\r\n\t\tErrors.catch(ex, \"Error in getRevitGeo(docEl) dir(el){0}\\ndir(docEl){1}\".format(dir(el), dir(docEl)))\r\n\t\trevitGeo = None\r\n\trevitGeos.append(revitGeo)\r\n\telIntFilter = \tDB.ElementIntersectsElementFilter(docEl)\r\n\t#reference = DB.Reference(docEl)\r\n\t#solid = docEl.GetGeometryObjectFromReference(reference)\r\n\tsolidIntFilter = DB.ElementIntersectsSolidFilter(revitGeo)\r\n\tintElements = DB.FilteredElementCollector(doc).WherePasses(elIntFilter).WhereElementIsNotElementType().ToElements()\r\n\tintSolids = DB.FilteredElementCollector(doc).WherePasses(solidIntFilter).WhereElementIsNotElementType().ToElements()\r\n\tintersectedElements.append(intElements)\r\n\tintersectedSolids.append(intSolids)\r\n\t# Get the Bounding Box of the selected element.\r\n\tel_bb = docEl.get_BoundingBox(doc.ActiveView)\r\n\tbbs.append(docEl)\r\n\t#Errors.catchVar(el_bb, \"{1} dir(el.Geometry) - {0}\".format(dir(el.Geometry[options]), i))\r\n\t#Errors.catchVar(el_bb.Max.X, \"{1} el_bb.Max.X - {0}\".format(el_bb.Max.X, i))\r\n\tbPoint = ( \\\r\n\t\t\t\tDB.UnitUtils.ConvertFromInternalUnits((el_bb.Max.X - el_bb.Min.X) / 2.0, DB.DisplayUnitType.DUT_MILLIMETERS), \\\r\n\t\t\t\tDB.UnitUtils.ConvertFromInternalUnits((el_bb.Max.Y - el_bb.Min.Y) / 2.0, DB.DisplayUnitType.DUT_MILLIMETERS), \\\r\n\t\t\t\tDB.UnitUtils.ConvertFromInternalUnits((el_bb.Max.Z - el_bb.Min.Z) / 2.0, DB.DisplayUnitType.DUT_MILLIMETERS) \\\r\n\t\t\t)\r\n\tbPoints.append(bPoint)\r\n\r\n# Close the transaction\r\n#t.Commit()\r\n#TransactionManager.Instance.TransactionTaskDone()\r\n\r\ngroupedByDistance = groupByDistance(list(structuredElements[1]))\r\n\r\nif Errors.hasError():\r\n \tOUT = Errors.report\r\nelif Errors.hasContent():\r\n\tOUT = Errors.getConntainerContent()\r\nelse:\r\n\tOUT = (structuredElements[1], bPoints, bbs, intersectedElements, intersectedSolids, revitGeos, groupedByDistance)\r\n\r\n\r\n\r\n\r\n",
+      "Id": "d816ad9a3f344e5d8bc6a231089d8a86",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "aeba8ad27bea4287b4e75a5d7a55ac02",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Vytvoří řetězec."
     }
   ],
   "Connectors": [
@@ -3674,11 +3674,6 @@
       "Id": "4bdce694402e466d960e1112a637034d"
     },
     {
-      "Start": "0cd5adac3eb94172b3451b3e1981d644",
-      "End": "727393c8f7124e368a8203751b389125",
-      "Id": "cbfe1cb71b384309880d6b16113911be"
-    },
-    {
       "Start": "0e79e38a1b1e49169ac82fa7ff1b0793",
       "End": "fcac170a96404302bccca75e1d1886b6",
       "Id": "106d23ff41d24b37861863e23c6d9d3f"
@@ -3727,6 +3722,11 @@
       "Start": "88eb03899b054d5e90a55cf02c2fbb77",
       "End": "baa4071cb74d4fe8810022828d4ef0b0",
       "Id": "9ee9fb777595486bab272b72bb5b848d"
+    },
+    {
+      "Start": "aeba8ad27bea4287b4e75a5d7a55ac02",
+      "End": "727393c8f7124e368a8203751b389125",
+      "Id": "444716fca47c45b9b5332717e7c8c74d"
     }
   ],
   "Dependencies": [],
@@ -3742,15 +3742,15 @@
     },
     "Camera": {
       "Name": "Náhled pozadí",
-      "EyeX": 17238.836350279802,
-      "EyeY": -455.5007396375272,
-      "EyeZ": 6551.4014246392289,
-      "LookX": -11122.094508860959,
-      "LookY": -281.68864344428084,
-      "LookZ": -14594.217761853171,
-      "UpX": 0.12084407916248337,
-      "UpY": 0.97992470462182724,
-      "UpZ": 0.15856948573159957
+      "EyeX": 19579.355288473846,
+      "EyeY": 3353.3514330020694,
+      "EyeZ": 3738.3992979994691,
+      "LookX": -13462.613447055002,
+      "LookY": -4090.5408160838774,
+      "LookZ": -11781.215635213412,
+      "UpX": -0.0065670418138835578,
+      "UpY": 0.9999619230651664,
+      "UpZ": -0.0057468585872027409
     },
     "NodeViews": [
       {
@@ -4240,8 +4240,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1172.4570965381492,
-        "Y": -1135.9630436817445
+        "X": 1129.9291734153283,
+        "Y": -1205.6615843552565
       },
       {
         "ShowGeometry": true,
@@ -4534,7 +4534,7 @@
         "Y": -969.7979799893584
       },
       {
-        "ShowGeometry": false,
+        "ShowGeometry": true,
         "Name": "joinStructuredElements",
         "Id": "31b2de10ec524f41b2f1906481febad2",
         "IsSetAsInput": false,
@@ -4542,16 +4542,6 @@
         "Excluded": false,
         "X": 1128.3183987862608,
         "Y": -967.99260880946883
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "String",
-        "Id": "6a9ac1c776f84fa89d0f9f89776c5512",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 810.47767066644224,
-        "Y": -738.35410736326855
       },
       {
         "ShowGeometry": true,
@@ -4590,7 +4580,7 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1890.8669481999673,
+        "X": 1892.0482793978233,
         "Y": -446.580323799479
       },
       {
@@ -4600,8 +4590,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 2621.50465577845,
-        "Y": 17.599847952103715
+        "X": 2543.4029932071649,
+        "Y": 9.58942102171548
       },
       {
         "ShowGeometry": false,
@@ -4614,7 +4604,7 @@
         "Y": -85.001834634609622
       },
       {
-        "ShowGeometry": true,
+        "ShowGeometry": false,
         "Name": "List.Flatten",
         "Id": "212450a6929140b2ac661f608e5051f2",
         "IsSetAsInput": false,
@@ -4654,7 +4644,7 @@
         "Y": -86.782968171542052
       },
       {
-        "ShowGeometry": true,
+        "ShowGeometry": false,
         "Name": "Element.Geometry",
         "Id": "1aa48405fea24516b3f393308ed5b738",
         "IsSetAsInput": false,
@@ -4662,6 +4652,16 @@
         "Excluded": false,
         "X": 1734.2052484472467,
         "Y": 86.969523256321622
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "String",
+        "Id": "d816ad9a3f344e5d8bc6a231089d8a86",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 860.72864451832811,
+        "Y": -582.54381334740719
       }
     ],
     "Annotations": [
@@ -4783,11 +4783,11 @@
         ],
         "Left": 724.16585003596811,
         "Top": -1259.840994500755,
-        "Width": 577.29124650218114,
-        "Height": 216.87795081901049,
+        "Width": 534.76332337936014,
+        "Height": 172.0,
         "FontSize": 36.0,
         "InitialTop": -1206.840994500755,
-        "InitialHeight": 215.87795081901049,
+        "InitialHeight": 148.06445803674546,
         "TextblockHeight": 43.0,
         "Background": "#FFC1D676"
       },
@@ -4878,22 +4878,21 @@
           "b9a7d404e4ea4f2a81d6678686130957",
           "31b2de10ec524f41b2f1906481febad2",
           "d1bf8da312fc481d91175641925aadcb",
-          "8c44c1184f2b47fc8422cb02957a4c57",
-          "6a9ac1c776f84fa89d0f9f89776c5512"
+          "8c44c1184f2b47fc8422cb02957a4c57"
         ],
         "Left": 650.71793087116316,
         "Top": -1024.119147078522,
         "Width": 1387.8616441874822,
-        "Height": 4470.7650397152538,
+        "Height": 206.30369384384494,
         "FontSize": 36.0,
         "InitialTop": -971.11914707852213,
-        "InitialHeight": 380.18022722311889,
+        "InitialHeight": 153.30369384384505,
         "TextblockHeight": 43.0,
         "Background": "#FFC1D676"
       }
     ],
-    "X": -507.0427071748486,
-    "Y": 837.15791735432163,
-    "Zoom": 0.86643265363089716
+    "X": -87.1479126060974,
+    "Y": 1243.8856725568698,
+    "Zoom": 0.8516437377128323
   }
 }
